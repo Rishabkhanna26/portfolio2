@@ -352,7 +352,6 @@ document.addEventListener('DOMContentLoaded', function () {
 // DOM ready
 document.addEventListener('DOMContentLoaded', () => {
   const loaderWrapper = document.getElementById('loader-wrapper');
-  const portfolioWrapper = document.querySelector('.portfolio-wrapper');
   const minLoaderTime = 1400;
   const startTime = Date.now();
 
@@ -362,7 +361,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     setTimeout(() => {
       loaderWrapper.classList.add('hidden');
-      portfolioWrapper.classList.add('portfolio-visible');
+      
+      // ✅ Call population functions directly
       populateSkills();
       populateExperience();
       populateProjects();
