@@ -75,9 +75,50 @@ const projects = [
   }
 ];
 
+// Greeting rotation function
+function rotateGreeting() {
+  const greetings = [
+    "HELLO", "नमस्ते", "ਸਤ ਸ੍ਰੀ ਅਕਾਲ", "হ্যালো", "హలో", "नमस्कार", "வணக்கம்",
+    "નમસ્તે", "سلام", "ಹಲೋ", "ഹലോ", "ନମସ୍କାର", "নমস্কাৰ", "नमस्कार", "नमः"
+  ];
+
+  let greetIndex = 0;
+  const helloEl = document.getElementById('hello');
+
+  function updateGreeting() {
+    if (helloEl) {
+      helloEl.textContent = greetings[greetIndex];
+      greetIndex = (greetIndex + 1) % greetings.length;
+    }
+  }
+
+  if (helloEl) {
+    updateGreeting();
+    setInterval(updateGreeting, 1500);
+  }
+}
 
 // Initialize the page
 document.addEventListener('DOMContentLoaded', function () {
+  // Handle loader
+  const loaderWrapper = document.getElementById('loader-wrapper');
+  const minLoaderTime = 1400;
+  const startTime = Date.now();
+
+  window.addEventListener('load', () => {
+    const timeElapsed = Date.now() - startTime;
+    const remainingTime = Math.max(0, minLoaderTime - timeElapsed);
+
+    setTimeout(() => {
+      if (loaderWrapper) {
+        loaderWrapper.classList.add('hidden');
+      }
+    }, remainingTime);
+  });
+
+  // Start greeting rotation
+  rotateGreeting();
+
   // Populate skills
   const skillsGrid = document.querySelector('.skills-grid');
   if (skillsGrid) {
@@ -86,7 +127,6 @@ document.addEventListener('DOMContentLoaded', function () {
         <div class="skill-card">
           <i class="${skill.icon}"></i>
           <span>${skill.name}</span>
-          
         </div>
       `;
     });
@@ -158,6 +198,13 @@ document.addEventListener('DOMContentLoaded', function () {
     updateModalImage();
   });
 
+  // Close modal when clicking outside
+  modal.addEventListener('click', (e) => {
+    if (e.target === modal) {
+      modal.classList.remove('active');
+    }
+  });
+
   // Populate projects with image slider
   const projectsGrid = document.querySelector('.projects-grid');
   if (projectsGrid) {
@@ -226,36 +273,17 @@ document.addEventListener('DOMContentLoaded', function () {
         const images = slider.querySelectorAll('.slider-image');
         const allDots = dots.querySelectorAll('.dot');
 
-        images[currentIndex].classList.remove('active');
-        allDots[currentIndex].classList.remove('active');
+        if (images.length > 1) {
+          images[currentIndex].classList.remove('active');
+          allDots[currentIndex].classList.remove('active');
 
-        currentIndex = (currentIndex + 1) % images.length;
+          currentIndex = (currentIndex + 1) % images.length;
 
-        images[currentIndex].classList.add('active');
-        allDots[currentIndex].classList.add('active');
+          images[currentIndex].classList.add('active');
+          allDots[currentIndex].classList.add('active');
+        }
       }, 5000);
     });
-  }
-
-  // Greeting rotation
-  const greetings = [
-    "HELLO", "नमस्ते", "ਸਤ ਸ੍ਰੀ ਅਕਾਲ", "হ্যালো", "హలో", "नमस्कार", "வணக்கம்",
-    "નમસ્તે", "سلام", "ಹಲೋ", "ഹലോ", "ନମସ୍କାର", "নমস্কাৰ", "नमस्कार", "नमः"
-  ];
-
-  let greetIndex = 0;
-  const helloEl = document.getElementById('hello');
-
-  function rotateGreeting() {
-    if (helloEl) {
-      helloEl.textContent = greetings[greetIndex];
-      greetIndex = (greetIndex + 1) % greetings.length;
-    }
-  }
-
-  if (helloEl) {
-    rotateGreeting();
-    setInterval(rotateGreeting, 1500);
   }
 
   // Scroll animations
@@ -304,13 +332,11 @@ document.addEventListener('DOMContentLoaded', function () {
       const translateX = isMobile ? scrollFraction * 50 : scrollFraction * 100;
       intro.style.transform = `translateX(${translateX}%)`;
       intro.style.opacity = `${1 - scrollFraction}`;
-      intro.style.pointerEvents = 'none'; // Prevent layout issues during transform
     }
   
     if (buttons) {
       buttons.style.transform = `scale(${1 - scrollFraction * 0.3})`;
       buttons.style.opacity = `${1 - scrollFraction}`;
-      buttons.style.pointerEvents = 'none'; // Prevent layout interactions
     }
   });
   
@@ -347,30 +373,4 @@ document.addEventListener('DOMContentLoaded', function () {
       window.location.href = mailtoLink;
     });
   }
-});
-
-// DOM ready
-document.addEventListener('DOMContentLoaded', () => {
-  const loaderWrapper = document.getElementById('loader-wrapper');
-  const minLoaderTime = 1400;
-  const startTime = Date.now();
-
-  window.addEventListener('load', () => {
-    const timeElapsed = Date.now() - startTime;
-    const remainingTime = Math.max(0, minLoaderTime - timeElapsed);
-
-    setTimeout(() => {
-      loaderWrapper.classList.add('hidden');
-      
-      // ✅ Call population functions directly
-      populateSkills();
-      populateExperience();
-      populateProjects();
-      initScrollAnimations();
-      initHeaderScrollEffects();
-    }, remainingTime);
-  });
-
-  rotateGreeting();
-  setInterval(rotateGreeting, 1500);
 });
